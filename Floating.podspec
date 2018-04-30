@@ -8,7 +8,7 @@ Floating is a very flexible and simple overlay library.
 DESC
 
   s.homepage     = "https://github.com/hirohisa/Floating"
-  s.license      = { :type => "MIT", :file => "LICENSE" }
+  s.license      = { :type => "MIT", :file => "LICENSE" }
 
   s.author       = { "Hirohisa Kawasaki" => "hirohisa.kawasaki@gmail.com" }
 
