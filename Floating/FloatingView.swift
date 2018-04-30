@@ -64,11 +64,11 @@ public class FloatingView<T :UIView>: UIView {
         }
     }
 
-    public func show(from frame: CGRect, stretch: Stretch = .width) {
+    public func present(from frame: CGRect, stretch: Stretch = .width) {
         guard let window = UIApplication.shared.keyWindow else { return }
 
         prepare(at: CGPoint(x: frame.midX, y: frame.midY), on: window)
-        show(from: make(src: frame.size, dest: contentView.frame.size, stretch: stretch), on: window)
+        present(from: make(src: frame.size, dest: contentView.frame.size, stretch: stretch), on: window)
     }
 
     private func prepare(at center: CGPoint, on window: UIWindow) {
@@ -78,7 +78,7 @@ public class FloatingView<T :UIView>: UIView {
         addSubview(contentView)
     }
 
-    private func show(from size: CGSize, on window: UIWindow) {
+    private func present(from size: CGSize, on window: UIWindow) {
         postNotification(name: .FloatingViewWillPresent)
 
         window.addSubview(self)

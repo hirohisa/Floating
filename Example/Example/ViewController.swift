@@ -36,9 +36,9 @@ class ViewController: UIViewController {
     }
 
     @IBAction func didTapPopupButton(_ sender: UIButton) {
-        let overlayView = FloatingView(makeUITextField(with: sender.titleLabel?.text ?? ""))
-        overlayView.backgroundColor = UIColor.gray.withAlphaComponent(0.2)
-        overlayView.show(from: sender.frame)
+        let floatingView = FloatingView(makeUITextField(with: sender.titleLabel?.text ?? ""))
+        floatingView.backgroundColor = UIColor.gray.withAlphaComponent(0.2)
+        floatingView.present(from: sender.frame)
     }
 
     func makeUITextField(with text: String) -> UITextField {
