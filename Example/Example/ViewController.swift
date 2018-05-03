@@ -38,7 +38,15 @@ class ViewController: UIViewController {
     @IBAction func didTapPopupButton(_ sender: UIButton) {
         let view = makeUITextField(with: sender.titleLabel?.text ?? "")
         let backgroundColor = UIColor.gray.withAlphaComponent(0.2)
-        FloatingView(view).configure(backgroundColor: backgroundColor).present(from: sender.frame)
+        let handler: FloatingView<UITextField>.Handler = { (state, object) in
+            print(state)
+            print(object)
+        }
+        FloatingView(view)
+//            .configure(backgroundColor: backgroundColor)
+//            .configure(handler: handler)
+            .configure(backgroundColor: backgroundColor, handler: handler)
+            .present(from: sender.frame)
     }
 
     func makeUITextField(with text: String) -> UITextField {
