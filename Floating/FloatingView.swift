@@ -64,6 +64,12 @@ public class FloatingView<T :UIView>: UIView {
         }
     }
 
+    public func configure(backgroundColor: UIColor?) -> Self {
+        self.backgroundColor = backgroundColor ?? self.backgroundColor
+
+        return self
+    }
+
     public func present(from frame: CGRect, stretch: Stretch = .width) {
         guard let window = UIApplication.shared.keyWindow else { return }
 
