@@ -72,6 +72,7 @@ NotificationCenter.default.addObserver(forName: .FloatingViewWillPresent, object
 ```swift
 
 // State
+
 enum FloatingView.State {
     case willPresent
     case didPresent
