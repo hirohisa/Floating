@@ -7,7 +7,7 @@ Floating
 Floating is a very flexible overlay library.
 
 Requirements
-----------
+-------
 
 - iOS 10.0+
 - Xcode 9.2+, Swift 4.1
@@ -21,11 +21,11 @@ pod 'Floating'
 ### Carthage
 
 ```
-github "hirohisa/Floating" ~> 0.0.2
+github "hirohisa/Floating"
 ```
 
 Usage
-----------
+-------
 
 ### FloatingView<T: UIView>
 
@@ -36,23 +36,58 @@ Usage
 import Floating
 
 func didTapButton(_ sender: UIButton) {
-    let floatingView = FloatingView(UITextField(frame: frame))
-    floatingView.backgroundColor = UIColor.gray.withAlphaComponent(0.2)
-    floatingView.present(from: sender.frame)
+  let handler: FloatingView<UITextField>.Handler = { (state, object) in
+      print(state)
+      print(object)
+  }
+  FloatingView(view)
+      .configure(backgroundColor: backgroundColor, handler: handler)
+      .present(from: sender.frame)
 }
 
 ```
 
-#### Notification.Name List
+### Handling with Life Cycle
+
+#### Observer
 
 ```swift
+
+// Notification.Name
+
 let FloatingViewWillPresent
 let FloatingViewDidPresent
 let FloatingViewWillDismiss
 let FloatingViewDidDismiss
+
+
+NotificationCenter.default.addObserver(forName: .FloatingViewWillPresent, object: nil, queue: nil) { (notification) in
+  ...
+}
+
 ```
 
+#### Closure
 
-## License
+```swift
+
+// State
+enum FloatingView.State {
+    case willPresent
+    case didPresent
+    case willDismiss
+    case didDismiss
+}
+
+let handler: FloatingView<T>.Handler = { (state: State, object: T) in
+  ...
+}
+FloatingView(view)
+    .configure(handler: handler)
+
+```
+
+License
+-------
 
 Floating is available under the MIT license.
