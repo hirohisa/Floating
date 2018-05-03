@@ -6,9 +6,10 @@
 //  Copyright © 2018 Hirohisa Kawasaki. All rights reserved.
 //
 
+import Foundation
 import UIKit
 
-extension NSNotification.Name {
+extension Notification.Name {
     public static let FloatingViewWillPresent = Notification.Name("FloatingViewWillPresent")
     public static let FloatingViewDidPresent = Notification.Name("FloatingViewDidPresent")
     public static let FloatingViewWillDismiss = Notification.Name("FloatingViewWillDismiss")
@@ -16,6 +17,26 @@ extension NSNotification.Name {
 }
 
 public class FloatingView<T :UIView>: UIView {
+
+    public enum State {
+        case willPresent
+        case didPresent
+        case willDismiss
+        case didDismiss
+
+        var notification: Notification.Name {
+            switch self {
+            case .willPresent:
+                return .FloatingViewWillPresent
+            case .didPresent:
+                return .FloatingViewWillPresent
+            case .willDismiss:
+                return .FloatingViewWillDismiss
+            case .didDismiss:
+                return .FloatingViewDidDismiss
+            }
+        }
+    }
 
     public enum Stretch {
         case none
@@ -34,6 +55,9 @@ public class FloatingView<T :UIView>: UIView {
             delegate?.dismiss()
         }
     }
+
+    public typealias Handler = (State, T) -> Void
+    var handler: Handler?
 
     public var object:T {
         return contentView
@@ -64,6 +88,14 @@ public class FloatingView<T :UIView>: UIView {
         }
     }
 
+    public func configure(backgroundColor: UIColor? = nil , handler: Handler? = nil) -> Self {
+        self.backgroundColor = backgroundColor ?? self.backgroundColor
+        self.handler = handler ?? self.handler
+
+
+        return self
+    }
+
     public func present(from frame: CGRect, stretch: Stretch = .width) {
         guard let window = UIApplication.shared.keyWindow else { return }
 
@@ -79,7 +111,7 @@ public class FloatingView<T :UIView>: UIView {
     }
 
     private func present(from size: CGSize, on window: UIWindow) {
-        postNotification(name: .FloatingViewWillPresent)
+        post(state: .willPresent)
 
         window.addSubview(self)
         let tempSize = contentView.frame.size
@@ -87,7 +119,7 @@ public class FloatingView<T :UIView>: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.contentView.bounds = CGRect(origin: CGPoint.zero, size: tempSize)
         }) { finished in
-            self.postNotification(name: .FloatingViewDidPresent)
+            self.post(state: .didPresent)
         }
     }
 
@@ -105,19 +137,20 @@ public class FloatingView<T :UIView>: UIView {
     }
 
     public func dismiss() {
-        postNotification(name: .FloatingViewWillDismiss)
+        post(state: .willDismiss)
         let tempAlpha = alpha
         UIView.animate(withDuration: 0.2, animations: {
             self.alpha = 0
         }) { [weak self] finished in
             self?.alpha = tempAlpha
             self?.removeFromSuperview()
-            self?.postNotification(name: .FloatingViewDidDismiss)
+            self?.post(state: .didDismiss)
         }
     }
 
-    private func postNotification(name: NSNotification.Name) {
-        NotificationCenter.default.post(name: name, object: self)
+    private func post(state: State) {
+        handler?(state, object)
+        NotificationCenter.default.post(name: state.notification, object: self)
     }
 
 }
