@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Floating"
-  s.version      = "0.0.2"
+  s.version      = "0.0.3"
   s.summary      = "Floating is a very flexible overlay library."
   s.description  = <<-DESC
 Floating is a very flexible and simple overlay library.
