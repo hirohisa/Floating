@@ -12,41 +12,25 @@ import Floating
 class ViewController: UIViewController {
 
     @IBOutlet var popupButton: UIButton!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        NotificationCenter.default.addObserver(forName: .FloatingViewWillPresent, object: nil, queue: nil) { (notification) in
-            self.popupButton.isHidden = true
-        }
-        NotificationCenter.default.addObserver(forName: .FloatingViewDidPresent, object: nil, queue: nil) { (notification) in
-            if let floatingView = notification.object as? FloatingView<UITextField> {
-                floatingView.object.becomeFirstResponder()
-            }
-        }
-        NotificationCenter.default.addObserver(forName: .FloatingViewWillDismiss, object: nil, queue: nil) { (notification) in
-            if let floatingView = notification.object as? FloatingView<UITextField> {
-                floatingView.object.resignFirstResponder()
-                self.popupButton.titleLabel?.text = floatingView.object.text
-            }
-        }
-        NotificationCenter.default.addObserver(forName: .FloatingViewDidDismiss, object: nil, queue: nil) { (notification) in
-            self.popupButton.isHidden = false
-        }
-    }
 
     @IBAction func didTapPopupButton(_ sender: UIButton) {
-        let view = makeUITextField(with: sender.titleLabel?.text ?? "")
-        let backgroundColor = UIColor.gray.withAlphaComponent(0.2)
-        let handler: FloatingView<UITextField>.Handler = { (state, object) in
-            print(state)
-            print(object)
+        let textField = makeUITextField(with: sender.titleLabel?.text ?? "")
+        let floatingView = FloatingView(textField)
+        floatingView.backgroundColor = UIColor.gray.withAlphaComponent(0.2)
+        floatingView.handler = { (state, object) in
+            switch state {
+            case .willPresent:
+                self.popupButton.isHidden = true
+            case .didPresent:
+                object.becomeFirstResponder()
+            case .willDismiss:
+                object.resignFirstResponder()
+                self.popupButton.titleLabel?.text = object.text
+            case .didDismiss:
+                self.popupButton.isHidden = false
+            }
         }
-        FloatingView(view)
-//            .configure(backgroundColor: backgroundColor)
-//            .configure(handler: handler)
-            .configure(backgroundColor: backgroundColor, handler: handler)
-            .present(from: sender.frame)
+        floatingView.present(from: sender.frame)
     }
 
     func makeUITextField(with text: String) -> UITextField {
