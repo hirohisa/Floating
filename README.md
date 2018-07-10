@@ -33,58 +33,30 @@ Usage
 
 ```swift
 
-import Floating
-
 func didTapButton(_ sender: UIButton) {
-  let handler: FloatingView<UITextField>.Handler = { (state, object) in
-      print(state)
-      print(object)
-  }
-  FloatingView(view)
-      .configure(backgroundColor: backgroundColor, handler: handler)
-      .present(from: sender.frame)
+  let floatingView = FloatingView(textField)
+  floatingView.present(from: sender.frame)
 }
 
 ```
 
 ### Handling with Life Cycle
 
-#### Observer
-
-```swift
-
-// Notification.Name
-
-let FloatingViewWillPresent
-let FloatingViewDidPresent
-let FloatingViewWillDismiss
-let FloatingViewDidDismiss
-
-
-NotificationCenter.default.addObserver(forName: .FloatingViewWillPresent, object: nil, queue: nil) { (notification) in
-  ...
-}
-
-```
-
-#### Closure
-
 ```swift
 
 // State
 
-enum FloatingView.State {
+enum Floating.State {
     case willPresent
     case didPresent
     case willDismiss
     case didDismiss
 }
 
-let handler: FloatingView<T>.Handler = { (state: State, object: T) in
-  ...
+floatingView.handler = { (state: State, object: T) in
+    print(state)
+    print(object)
 }
-FloatingView(view)
-    .configure(handler: handler)
 
 ```
 

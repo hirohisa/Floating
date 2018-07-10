@@ -9,34 +9,7 @@
 import Foundation
 import UIKit
 
-extension Notification.Name {
-    public static let FloatingViewWillPresent = Notification.Name("FloatingViewWillPresent")
-    public static let FloatingViewDidPresent = Notification.Name("FloatingViewDidPresent")
-    public static let FloatingViewWillDismiss = Notification.Name("FloatingViewWillDismiss")
-    public static let FloatingViewDidDismiss = Notification.Name("FloatingViewDidDismiss")
-}
-
 public class FloatingView<T :UIView>: UIView {
-
-    public enum State {
-        case willPresent
-        case didPresent
-        case willDismiss
-        case didDismiss
-
-        var notification: Notification.Name {
-            switch self {
-            case .willPresent:
-                return .FloatingViewWillPresent
-            case .didPresent:
-                return .FloatingViewWillPresent
-            case .willDismiss:
-                return .FloatingViewWillDismiss
-            case .didDismiss:
-                return .FloatingViewDidDismiss
-            }
-        }
-    }
 
     public enum Stretch {
         case none
@@ -45,8 +18,10 @@ public class FloatingView<T :UIView>: UIView {
         case all
     }
 
-    class CoverView: UIView {
+    public typealias Handler = (State, T) -> Void
+    public var handler: Handler?
 
+    private class CoverView: UIView {
         weak var delegate: FloatingView?
 
         override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -55,9 +30,6 @@ public class FloatingView<T :UIView>: UIView {
             delegate?.dismiss()
         }
     }
-
-    public typealias Handler = (State, T) -> Void
-    var handler: Handler?
 
     public var object:T {
         return contentView
@@ -86,14 +58,6 @@ public class FloatingView<T :UIView>: UIView {
                 backgroundColor = UIColor.clear
             }
         }
-    }
-
-    public func configure(backgroundColor: UIColor? = nil , handler: Handler? = nil) -> Self {
-        self.backgroundColor = backgroundColor ?? self.backgroundColor
-        self.handler = handler ?? self.handler
-
-
-        return self
     }
 
     public func present(from frame: CGRect, stretch: Stretch = .width) {
@@ -150,7 +114,6 @@ public class FloatingView<T :UIView>: UIView {
 
     private func post(state: State) {
         handler?(state, object)
-        NotificationCenter.default.post(name: state.notification, object: self)
     }
 
 }
